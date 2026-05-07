@@ -4,7 +4,7 @@ This document provides instructions for an AI coding agent to set up the [Pup CL
 
 ## Overview
 
-Pup is a comprehensive CLI for Datadog's observability platform, with 325+ commands across 57 product domains. It includes 7 skills and 48 domain agents that can be installed into your AI coding assistant (Claude Code, Cursor, etc.).
+Pup is a comprehensive CLI for Datadog's observability platform, with 325+ commands across 57 product domains. It includes 9 skills and 48 domain agents that can be installed into your AI coding assistant (Claude Code, Cursor, etc.).
 
 ## Quick Start (for AI Agents)
 
@@ -88,7 +88,7 @@ pup test
 
 ## Skills Installation
 
-Pup includes 7 skills and 48 domain agents that can be installed to your AI assistant's configuration.
+Pup includes 9 skills and 48 domain agents that can be installed to your AI assistant's configuration.
 
 ### Choose Installation Location
 
@@ -141,25 +141,25 @@ First, attempt to detect which AI coding agent is in use using multiple methods 
 
 ### Install Skills
 
-Based on the user's choice, run the appropriate command:
+`pup skills install` chooses the install location based on the current working directory: if it finds an agent-specific directory (e.g. `.claude/`) by walking up from cwd, it installs there; otherwise it falls back to `$HOME`. Run `pup skills path` first to confirm where files will be written.
 
-- **Global installation** (default, no target directory):
+- **Global installation** — run from a directory without a project agent dir (e.g. `$HOME`):
   ```bash
-  pup skills install
+  cd ~ && pup skills install
   ```
-  This installs skills to the agent's default global directory (e.g., `~/.claude/skills/` for Claude Code).
+  For Claude Code this writes skills to `~/.claude/skills/<skill>/` and agents to `~/.claude/agents/<agent>.md`.
 
-- **Project-specific installation**:
+- **Project-specific installation** — run from inside the project:
   ```bash
-  pup skills install --target-dir=<target-dir>
+  cd /path/to/project && pup skills install
   ```
-  Replace `<target-dir>` with the chosen project directory (e.g., `.claude/skills/` for Claude Code, `.cursor/skills/` for Cursor).
+  This writes to `<project>/.claude/skills/` and `<project>/.claude/agents/`.
 
-- **Custom installation**:
+- **Custom installation** — override the install dir with `--dir`:
   ```bash
-  pup skills install --target-dir=/path/to/your/skills
+  pup skills install --dir=/path/to/install/root
   ```
-  Use the absolute or relative path provided by the user.
+  Note: `--dir` is the literal install root for everything. Pointing it at a leaf directory like `~/.claude` flattens skills and agents into `~/.claude/<name>/SKILL.md` instead of preserving the `skills/` + `agents/` layout. For Claude Code's normal layout, prefer the `cd` approach above.
 
 You can also install specific skills individually by appending the skill name (e.g., `pup skills install dd-monitors`).
 
@@ -224,6 +224,8 @@ After installation, verify everything works:
 | `dd-docs` | Search Datadog documentation via llms.txt |
 | `dd-code-generation` | CLI vs code-gen decision, multi-language examples |
 | `dd-file-issue` | Issue routing to correct repo, duplicate search |
+| `dd-debugger` | Live Debugger — inspect runtime values via log probes |
+| `dd-symdb` | Symbol Database — search service symbols, find probe-able methods |
 
 ## Available Domain Agents (48)
 
